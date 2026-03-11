@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Simple Car Game</title>
+<style>
+body {
+  background: #333;
+  margin: 0;
+  overflow: hidden;
+}
+
+#gameArea {
+  width: 400px;
+  height: 600px;
+  background: #555;
+  margin: auto;
+  position: relative;
+  overflow: hidden;
+  border: 5px solid white;
+}
+
+.car {
+  width: 50px;
+  height: 100px;
+  background: red;
+  position: absolute;
+  bottom: 20px;
+  left: 175px;
+}
+
+.enemy {
+  width: 50px;
+  height: 100px;
+  background: yellow;
+  position: absolute;
+  top: -120px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="gameArea">
+  <div class="car" id="player"></div>
+</div>
+
+<script>
+
+let player = document.getElementById("player");
+let gameArea = document.getElementById("gameArea");
+
+let playerX = 175;
+let speed = 5;
+
+document.addEventListener("keydown", moveCar);
+
+function moveCar(e) {
+  if (e.key === "ArrowLeft" && playerX > 0) {
+    playerX -= 20;
+  }
+  if (e.key === "ArrowRight" && playerX < 350) {
+    playerX += 20;
+  }
+  player.style.left = playerX + "px";
+}
+
+function createEnemy() {
+  let enemy = document.createElement("div");
+  enemy.classList.add("enemy");
+  enemy.style.left = Math.floor(Math.random() * 350) + "px";
+  gameArea.appendChild(enemy);
+
+  let enemyY = -120;
+
+  let move = setInterval(() => {
+    enemyY += speed;
+    enemy.style.top = enemyY + "px";
+
+    if (enemyY > 600) {
+      enemy.remove();
+      clearInterval(move);
+    }
+
+    if (checkCollision(player, enemy)) {
+      alert("Game Over!");
+      location.reload();
+    }
+
+  }, 20);
+}
+
+function checkCollision(a, b) {
+  let aRect = a.getBoundingClientRect();
+  let bRect = b.getBoundingClientRect();
+
+  return !(
+    aRect.bottom < bRect.top ||
+    aRect.top > bRect.bottom ||
+    aRect.right < bRect.left ||
+    aRect.left > bRect.right
+  );
+}
+
+setInterval(createEnemy, 1500);
+
+</script>
+
+</body>
+</html>
